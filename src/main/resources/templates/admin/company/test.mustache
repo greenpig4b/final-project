@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width" />
+    <title>StartUp</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/comm.css" />
+    <style>
+        .imgs_wrap {
+            display: flex;
+            flex-flow: row wrap;
+            width: 100%;
+            border: 1px solid gray;
+            padding: 10px;
+            box-sizing: content-box;
+            margin-bottom: 20px;
+        }
+
+        .imgs_wrap .img_item {
+            width: 150px;
+            padding: 5px;
+            border: 1px solid black;
+            margin-right: 10px;
+        }
+
+        .imgs_wrap .img_item img {
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>업로드 이미지 미리보기</h3>
+    <div class="imgs_wrap">
+
+    </div>
+
+    <input type="file" id="input_file" multiple />
+    <input type="button" value="submit" onclick="submitAction();" />
+
+
+
+</div>
+<script src="/js/jquery.min.3.2.1.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/js/mustache.js"></script>
+<script type="text/javascript" src="/js/comm.js"></script>
+<script type="text/x-mustache" id="temp_item">
+    <div class="img_item" id="img_item_{{ index }}">
+            <img src="{{ url_src }}" />
+            <input type="button" value="삭제" onclick="deleteItemAction({{ index }})" />
+            <input type="hidden" class="hd_content_index" value="{{index}}" />
+        </div>
+</script>
+<script>
+    var contents = new Array();
+    var content_files = new Array();
+
+    $(document).ready(function() {
+        $("#input_file").on("change", handleImgFileSelect);
+    });
+
+    function submitAction() {
+        var formData = new FormData();
+        $(".hd_content_index").each(function(index, item){
+            for(var i=0; i<contents.length; i++) {
+                var content = contents[i];
+                if(content.index == $(this).val() && content.is_delete == false) {
+                    formData.append("img_"+i, content_files[i]);
+                    break;
+                }
+            }
+        });
+
+        var url = "/api/form/upload_images";
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: url,
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(result) {
+                // 성공시 http status code 200
+                console.log(result);
+            },
+            error: function(xhr, status, error) {
+                // 실패시 http status code 200 이 아닌 경우
+                console.log(xhr);
+            }
+        });
+
+    }
+
+    function deleteItemAction(index) {
+        $("#img_item_"+index).css("display","none");
+        contents[index].is_delete = true;
+    }
+
+    function handleImgFileSelect(e) {
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+
+        filesArr.forEach(function(f) {
+            if(!f.type.match("image.*")) {
+                alert("확장자는 이미지 확장자만 가능합니다.");
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = {
+                    "index":contents.length,
+                    "url_src":e.target.result,
+                    "is_delete":false
+                };
+
+                contents.push(data);
+                content_files.push(f);
+
+                var template = $("#temp_item").html();
+                var html = Mustache.render(template, data);
+                $(".imgs_wrap").append(html);
+                $(".imgs_wrap").sortable();
+            }
+            reader.readAsDataURL(f);
+        });
+
+        $("#input_file").val('');
+    }
+
+</script>
+
+</body>
+</html>
