@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 
 public class ReviewRequest {
 
-
-
     @Data
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public class ReviewReqDTO{
@@ -19,6 +17,11 @@ public class ReviewRequest {
             this.content = content;
         }
 
-        public Review toEntity()
+        public Review toEntity(){
+            return Review.builder()
+                    .id(this.userId)
+
+                    .build();
+        }
     }
 }

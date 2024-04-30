@@ -18,17 +18,18 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final StayRepository stayRepository;
 
-    @Transactional
-    public Review save(Integer roomId,ReviewRequest.ReviewReqDTO reqDTO){
-        //1.인증처리
-
-        //  1-1 유저찾기
-        User user = userRepository.findById(reqDTO.getUserId())
-                .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다."));
-        //  1-2 작성하는 숙소 찾기
-        Stay stay = stayRepository.findById(roomId)
-                .orElseThrow(() -> new Exception404("해당 숙소를 찾을 수 없습니다."));
-
-        Review review =
-    }
+//    @Transactional
+//    public Review save(Integer roomId,ReviewRequest.ReviewReqDTO reqDTO){
+//        //1.인증처리
+//
+//        //  1-1 유저찾기
+//        User user = userRepository.findById(reqDTO.getUserId())
+//                .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다."));
+//        //  1-2 작성하는 숙소 찾기
+//        Stay stay = stayRepository.findById(roomId)
+//                .orElseThrow(() -> new Exception404("해당 숙소를 찾을 수 없습니다."));
+//
+//        Review review = reviewRepository.save(reqDTO.toEntity());
+//
+//    }
 }

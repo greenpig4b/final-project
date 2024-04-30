@@ -2,7 +2,9 @@ package com.example.final_project.stay;
 
 import com.example.final_project.company.Company;
 import com.example.final_project.option.Option;
+import com.example.final_project.review.Review;
 import com.example.final_project.room.Room;
+import com.example.final_project.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -49,6 +51,9 @@ public class Stay {
 
     @OneToMany(mappedBy = "stay", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Room> rooms = new ArrayList<>(); // 방(객실) 옵션 리스트
+
+    @OneToMany(mappedBy = "stay", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
 
     @CreationTimestamp
     private LocalDateTime createdAt; // 숙소 등록 일자

@@ -14,9 +14,11 @@ public class ReviewRepositoryTest {
     @Test
     public void findById_test(){
         //given
-        Integer userId = 1;
+
         //when
 
         //then
     }
 }
+
+// 테스트 사이트 주소 : https://kukekyakya.tistory.com/554
